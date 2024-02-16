@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import "./styles.css";
+import { useState } from "react";
 
 const navLinks = [
 	{ name: "Register", href: "/register" },
@@ -14,9 +15,17 @@ export default function AuthLayout({
 }: {
 	children: React.ReactNode;
 }) {
+	const [input, setInput] = useState("");
 	const pathname = usePathname();
 	return (
 		<div>
+			<div>
+				<input
+					type="text"
+					value={input}
+					onChange={(e) => setInput(e.target.value)}
+				/>
+			</div>
 			{navLinks.map((link) => {
 				const isActive = pathname.startsWith(link.href);
 				return (
@@ -32,3 +41,6 @@ export default function AuthLayout({
 		</div>
 	);
 }
+
+// Templates cause the whole DOM to be re-created, state is not preserved, and effects are re-synced
+// Layout > Template > Page
