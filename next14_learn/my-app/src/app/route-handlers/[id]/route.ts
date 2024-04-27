@@ -1,3 +1,4 @@
+import {redirect} from "next/navigation"
 import { headers } from "next/headers";
 import { type NextRequest } from "next/server";
 
@@ -16,12 +17,20 @@ export async function GET(
 	request: NextRequest,
 	{ params }: { params: { id: string } } // context has params
 ) {
+	if(parseInt(params.id) > persons.length){
+		redirect("/route-handlers")
+	}
+	const requestHeaders = new Headers(request.headers)
+	console.log(requestHeaders.get("Content-Type"))
+	const nextHeaders = headers();
+	console.log(nextHeaders.get("Content-Type"))
 	const searchParams = request.nextUrl.searchParams;
 	const query = searchParams.get("query");
+	console.log(request.nextUrl);
 	const filteredPersons = query
 		? persons.filter((person) => person.name.includes(query))
 		: persons;
-	return (filteredPersons ? filteredPersons : Response.json(
+	return (filteredPersons.length ? Response.json(filteredPersons) : Response.json(
 		persons.find((person) => person.id === parseInt(params.id))
 	));
 }
